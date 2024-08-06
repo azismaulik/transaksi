@@ -36,7 +36,10 @@ const formSchema = z.object({
     .min(1, { message: "Silahkan isi nama customer" })
     .max(100, { message: "Nama tidak boleh lebih dari 100 karakter" }),
   kode: z.string().min(1, { message: "Silahkan isi kode customer" }),
-  telp: z.string().min(1, { message: "Silahkan isi nomor telepon customer" }),
+  telp: z
+    .string()
+    .min(1, { message: "Silahkan isi nomor telepon customer" })
+    .regex(/^[0-9]+$/, { message: "Nomor telepon hanya boleh berisi angka" }),
 });
 
 type FormValues = z.infer<typeof formSchema>;
@@ -75,14 +78,9 @@ const EditModalCustomer = ({ customer }: { customer: Customer }) => {
     }
   }
 
-  const handleNumberInput = (
-    e: React.ChangeEvent<HTMLInputElement>,
-    onChange: (value: number) => void
-  ) => {
-    const value =
-      e.target.value === "" ? 0 : Math.max(0, parseFloat(e.target.value));
-    onChange(value);
-    e.target.value = value.toString();
+  const handleTelephoneInput = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value.replace(/\D/g, "");
+    form.setValue("telp", value);
   };
 
   return (
@@ -100,7 +98,8 @@ const EditModalCustomer = ({ customer }: { customer: Customer }) => {
         <Form {...form}>
           <form
             onSubmit={form.handleSubmit(onSubmit)}
-            className="space-y-4 w-full">
+            className="space-y-4 w-full"
+          >
             <FormField
               control={form.control}
               name="kode"
@@ -140,11 +139,10 @@ const EditModalCustomer = ({ customer }: { customer: Customer }) => {
                   <FormLabel>Telepon customer</FormLabel>
                   <FormControl>
                     <Input
-                      type="number"
-                      placeholder="Enter product price"
+                      placeholder="Masukkan nomor telepon"
                       {...field}
-                      onChange={(e) => handleNumberInput(e, field.onChange)}
-                      min={0}
+                      onChange={handleTelephoneInput}
+                      inputMode="numeric"
                     />
                   </FormControl>
                   <FormMessage />
@@ -159,7 +157,8 @@ const EditModalCustomer = ({ customer }: { customer: Customer }) => {
                 </DialogClose>
                 <SubmitButton
                   loadingText="Menyimpan..."
-                  className="bg-green-600 hover:bg-green-600/90">
+                  className="bg-green-600 hover:bg-green-600/90"
+                >
                   Simpan
                 </SubmitButton>
               </div>
