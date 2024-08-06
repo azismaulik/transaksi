@@ -113,7 +113,7 @@ export const columns: ColumnDef<Barang>[] = [
       return (
         <div className="flex gap-2 items-center">
           <EditModal barang={barang} />
-          <DeleteModal barang={barang} />
+          {/* <DeleteModal barang={barang} /> */}
         </div>
       );
     },
@@ -186,8 +186,7 @@ export function BarangTable({ data }: { data: Barang[] }) {
               table.getRowModel().rows.map((row, index) => (
                 <TableRow
                   key={row.id}
-                  data-state={row.getIsSelected() && "selected"}
-                >
+                  data-state={row.getIsSelected() && "selected"}>
                   {row.getVisibleCells().map((cell) => (
                     <React.Fragment key={cell.id}>
                       <TableCell>
@@ -205,8 +204,7 @@ export function BarangTable({ data }: { data: Barang[] }) {
               <TableRow>
                 <TableCell
                   colSpan={columns.length}
-                  className="h-24 text-center"
-                >
+                  className="h-24 text-center">
                   No results.
                 </TableCell>
               </TableRow>
@@ -220,16 +218,14 @@ export function BarangTable({ data }: { data: Barang[] }) {
             variant="outline"
             size="sm"
             onClick={() => table.previousPage()}
-            disabled={!table.getCanPreviousPage()}
-          >
+            disabled={!table.getCanPreviousPage()}>
             Previous
           </Button>
           <Button
             variant="outline"
             size="sm"
             onClick={() => table.nextPage()}
-            disabled={!table.getCanNextPage()}
-          >
+            disabled={!table.getCanNextPage()}>
             Next
           </Button>
         </div>

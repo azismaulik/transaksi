@@ -8,7 +8,7 @@ import { revalidatePath } from "next/cache";
 const productSchema = z.object({
   nama: z.string().min(1).max(100),
   harga: z.number().positive(),
-  stok: z.number().positive(),
+  stok: z.number().min(0),
   kode: z.string(),
   diskon: z.number().min(0).max(100).optional(),
 });

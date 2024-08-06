@@ -122,8 +122,7 @@ export default function AddBarangModal() {
         <Form {...form}>
           <form
             onSubmit={form.handleSubmit(onSubmit)}
-            className="space-y-4 w-full"
-          >
+            className="space-y-4 w-full">
             <FormField
               control={form.control}
               name="nama"
@@ -202,7 +201,7 @@ export default function AddBarangModal() {
               name="diskon"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Diskon</FormLabel>
+                  <FormLabel>Diskon (%)</FormLabel>
                   <FormControl>
                     <Input
                       type="number"
