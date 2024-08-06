@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useCallback, useState } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
@@ -49,10 +49,15 @@ const formSchema = z.object({
 const CreateCustomerModal = () => {
   const [isOpen, setIsOpen] = useState(false);
 
+  const generateCode = useCallback(
+    () => "CUST" + Math.floor(Math.random() * 10000).toString(),
+    []
+  );
+
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      kode: "CUST" + Math.floor(Math.random() * 10000).toString(),
+      kode: generateCode(),
       name: "",
       telp: "",
     },
@@ -63,6 +68,14 @@ const CreateCustomerModal = () => {
     form.setValue("telp", value);
   };
 
+  const resetForm = useCallback(() => {
+    form.reset({
+      kode: generateCode(),
+      name: "",
+      telp: "",
+    });
+  }, [form, generateCode]);
+
   async function onSubmit(values: z.infer<typeof formSchema>) {
     const result = await addCustomer(values);
 
@@ -71,6 +84,7 @@ const CreateCustomerModal = () => {
         title: "Success",
         description: "Customer berhasil dibuat",
       });
+      resetForm();
       setIsOpen(false);
     } else {
       toast({
@@ -78,7 +92,6 @@ const CreateCustomerModal = () => {
         title: "Error",
         description: "Gagal menambahkan customer",
       });
-      setIsOpen(false);
     }
   }
 

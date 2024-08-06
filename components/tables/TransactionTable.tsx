@@ -49,8 +49,7 @@ export const columns: ColumnDef<SalesWithCustomer>[] = [
       return (
         <Button
           variant="ghost"
-          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-        >
+          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}>
           Tanggal
           <ArrowUpDown className="ml-2 h-4 w-4" />
         </Button>
@@ -58,11 +57,11 @@ export const columns: ColumnDef<SalesWithCustomer>[] = [
     },
     cell: ({ row }) => <div>{formatDate(row.getValue("tgl"))}</div>,
   },
-  // {
-  //   accessorKey: "customer.name",
-  //   header: "Nama Costumer",
-  //   cell: ({ row }) => <div>{row.getValue("customer.name")}</div>,
-  // },
+  {
+    accessorKey: "customer",
+    header: "Nama Costumer",
+    cell: ({ row }) => <div>{row.original.customer.name}</div>,
+  },
   {
     accessorKey: "subtotal",
     header: () => <div className="text-right">Subtotal</div>,
@@ -79,7 +78,7 @@ export const columns: ColumnDef<SalesWithCustomer>[] = [
     cell: ({ row }) => {
       const diskon = parseFloat(row.getValue("diskon"));
 
-      return <div className="text-right font-medium">{diskon}</div>;
+      return <div className="text-right font-medium">{diskon}%</div>;
     },
   },
   {
@@ -124,8 +123,7 @@ export const columns: ColumnDef<SalesWithCustomer>[] = [
       return (
         <Link
           className={buttonVariants({ size: "sm", variant: "link" })}
-          href={`/transaksi/${row.getValue("id")}`}
-        >
+          href={`/transaksi/${row.getValue("id")}`}>
           Lihat Detail
         </Link>
       );
@@ -166,8 +164,7 @@ export function TransactionTable({ data }: { data: SalesWithCustomer[] }) {
       <div className="flex items-center justify-between py-4 gap-4">
         <Link
           className={buttonVariants({ variant: "default" })}
-          href="transaksi/buat"
-        >
+          href="transaksi/buat">
           Buat Transaksi
         </Link>
         <Input
@@ -204,8 +201,7 @@ export function TransactionTable({ data }: { data: SalesWithCustomer[] }) {
               table.getRowModel().rows.map((row, index) => (
                 <TableRow
                   key={index}
-                  data-state={row.getIsSelected() && "selected"}
-                >
+                  data-state={row.getIsSelected() && "selected"}>
                   {row.getVisibleCells().map((cell) => (
                     <React.Fragment key={cell.id}>
                       <TableCell key={cell.id}>
@@ -223,8 +219,7 @@ export function TransactionTable({ data }: { data: SalesWithCustomer[] }) {
               <TableRow>
                 <TableCell
                   colSpan={columns.length}
-                  className="h-24 text-center"
-                >
+                  className="h-24 text-center">
                   No results.
                 </TableCell>
               </TableRow>
