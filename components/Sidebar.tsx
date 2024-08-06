@@ -16,6 +16,10 @@ import { Menu } from "lucide-react";
 const menus = [
   {
     path: "/",
+    label: "Dashboard",
+  },
+  {
+    path: "/transaksi",
     label: "Transaksi",
   },
   {
@@ -53,7 +57,8 @@ const Sidebar = () => {
                     "bg-primary text-white": pathname === menu.path,
                   }
                 )}
-                href={menu.path}>
+                href={menu.path}
+              >
                 {menu.label}
               </Link>
             ))}
@@ -73,7 +78,8 @@ const Sidebar = () => {
                   "bg-primary text-white": pathname === menu.path,
                 }
               )}
-              href={menu.path}>
+              href={menu.path}
+            >
               {menu.label}
             </Link>
           ))}

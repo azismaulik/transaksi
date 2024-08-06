@@ -34,14 +34,17 @@ import {
 } from "@/components/ui/table";
 import { formatRupiah } from "@/lib/helper/formatRupiah";
 import { Button } from "@/components/ui/button";
+import { addTransaction } from "@/lib/actions/transaction.action";
+import { toast } from "@/components/ui/use-toast";
+import { useRouter } from "next/navigation";
 
 const formSchema = z.object({
   kode: z
     .string()
     .min(1, { message: "Kode is required" })
     .max(15, { message: "Kode must be 15 characters or less" }),
-  tanggal: z.string().min(1, { message: "Tanggal is required" }),
-  customer_id: z.string().min(1, { message: "Customer is required" }),
+  tanggal: z.string().min(1, { message: "Silahkan pilih tanggal" }),
+  customer_id: z.string().min(1, { message: "Silahkan pilih customer" }),
   subtotal: z.number().min(0, { message: "Subtotal must be 0 or greater" }),
   diskon_persen: z
     .number()
@@ -65,6 +68,7 @@ const CreateTransactionForm = ({
   customers: Customer[];
   products: Barang[];
 }) => {
+  const router = useRouter();
   const [barangs, setBarangs] = useState<(Barang & { qty: number })[]>([]);
 
   const form = useForm<FormValues>({
@@ -173,13 +177,27 @@ const CreateTransactionForm = ({
   }, [form.watch]);
 
   async function onSubmit(values: FormValues) {
-    // Implementation for form submission
+    const result = await addTransaction(values, barangs);
+
+    if (result.success) {
+      console.log(result.message);
+      form.reset();
+      setBarangs([]);
+      toast({
+        title: "Success",
+        description: result.message,
+      });
+      router.push("/transaksi");
+    } else {
+      console.error(result.message);
+    }
   }
   return (
     <Form {...form}>
       <form
         onSubmit={form.handleSubmit(onSubmit)}
-        className="space-y-4 md:py-10">
+        className="space-y-4 md:py-10"
+      >
         <FormField
           control={form.control}
           name="kode"
@@ -222,7 +240,8 @@ const CreateTransactionForm = ({
                   {customers.map((customer) => (
                     <SelectItem
                       key={customer.id}
-                      value={customer.id.toString()}>
+                      value={customer.id.toString()}
+                    >
                       {customer.name}
                     </SelectItem>
                   ))}
@@ -299,7 +318,8 @@ const CreateTransactionForm = ({
                   <TableCell>
                     <Button
                       variant="destructive"
-                      onClick={() => handleRemoveBarang(barang.id)}>
+                      onClick={() => handleRemoveBarang(barang.id)}
+                    >
                       Hapus
                     </Button>
                   </TableCell>

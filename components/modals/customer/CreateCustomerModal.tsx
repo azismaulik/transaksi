@@ -40,7 +40,10 @@ const formSchema = z.object({
   telp: z
     .string()
     .min(1, { message: "Telephone number is required" })
-    .max(20, { message: "Telephone number must be 20 characters or less" }),
+    .max(20, { message: "Telephone number must be 20 characters or less" })
+    .regex(/^[0-9]+$/, {
+      message: "Telephone number must contain only digits",
+    }),
 });
 
 const CreateCustomerModal = () => {
@@ -54,6 +57,12 @@ const CreateCustomerModal = () => {
       telp: "",
     },
   });
+
+  const handleTelephoneInput = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value.replace(/\D/g, "");
+    form.setValue("telp", value);
+  };
+
   async function onSubmit(values: z.infer<typeof formSchema>) {
     const result = await addCustomer(values);
 
@@ -112,7 +121,7 @@ const CreateCustomerModal = () => {
                   <FormLabel>Name</FormLabel>
                   <FormControl>
                     <Input
-                      placeholder="Enter customer name"
+                      placeholder="Masukkan nama customer"
                       {...field}
                       maxLength={100}
                     />
@@ -126,12 +135,14 @@ const CreateCustomerModal = () => {
               name="telp"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Telephone</FormLabel>
+                  <FormLabel>No Telpon</FormLabel>
                   <FormControl>
                     <Input
-                      placeholder="Enter telephone number"
+                      placeholder="Masukkan no telpon customer"
                       {...field}
                       maxLength={20}
+                      onChange={handleTelephoneInput}
+                      inputMode="numeric"
                     />
                   </FormControl>
                   <FormMessage />

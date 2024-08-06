@@ -35,7 +35,7 @@ const formSchema = z.object({
     .string()
     .min(1, { message: "Silahkan isi nama barang" })
     .max(100, { message: "Nama tidak boleh lebih dari 100 karakter" }),
-  harga: z.number().min(0, { message: "Harga tidak boleh negatif" }),
+  harga: z.number().min(1, { message: "Harga tidak boleh kosong" }),
   stok: z.number().min(0, { message: "Stok tidak boleh negatif" }),
   kode: z.string().min(1, { message: "Silahkan isi kode barang" }),
   diskon: z.number().min(0).max(100).optional(),
@@ -122,7 +122,8 @@ export default function AddBarangModal() {
         <Form {...form}>
           <form
             onSubmit={form.handleSubmit(onSubmit)}
-            className="space-y-4 w-full">
+            className="space-y-4 w-full"
+          >
             <FormField
               control={form.control}
               name="nama"
