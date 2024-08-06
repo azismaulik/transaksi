@@ -1,11 +1,11 @@
 import React from "react";
 import CreateTransactionForm from "./Form";
 import { getAllDataCustomer } from "@/api/customer";
-import { getAllDataBarang } from "@/api/barang";
+import { getReadyDataBarang } from "@/api/barang";
 
 const BuatTransaksiPage = async () => {
   const customers = await getAllDataCustomer();
-  const products = await getAllDataBarang();
+  const products = await getReadyDataBarang();
 
   return <CreateTransactionForm customers={customers} products={products} />;
 };

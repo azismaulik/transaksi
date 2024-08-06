@@ -95,9 +95,18 @@ const CreateTransactionForm = ({
           (b) => b.id === selectedBarang.id
         );
         if (existingBarang) {
-          return prevBarangs.map((b) =>
-            b.id === selectedBarang.id ? { ...b, qty: b.qty + 1 } : b
-          );
+          if (existingBarang.qty + 1 <= selectedBarang.stok) {
+            return prevBarangs.map((b) =>
+              b.id === selectedBarang.id ? { ...b, qty: b.qty + 1 } : b
+            );
+          } else {
+            toast({
+              title: "Stok limit reached",
+              description: `Cannot add more ${selectedBarang.nama}. Stok limit: ${selectedBarang.stok}`,
+              variant: "destructive",
+            });
+            return prevBarangs;
+          }
         } else {
           return [...prevBarangs, { ...selectedBarang, qty: 1 }];
         }
@@ -110,8 +119,28 @@ const CreateTransactionForm = ({
   };
 
   const handleQuantityChange = (id: number, newQty: number) => {
+    if (newQty === 0) {
+      handleRemoveBarang(id);
+      return;
+    }
+
     setBarangs((prevBarangs) =>
-      prevBarangs.map((b) => (b.id === id ? { ...b, qty: newQty } : b))
+      prevBarangs.map((b) => {
+        if (b.id === id) {
+          const product = products.find((p) => p.id === id);
+          if (product && newQty <= product.stok) {
+            return { ...b, qty: newQty };
+          } else {
+            toast({
+              title: "Stok limit reached",
+              description: `Cannot set quantity above ${product?.stok} for ${b.nama}`,
+              variant: "destructive",
+            });
+            return b;
+          }
+        }
+        return b;
+      })
     );
   };
 
@@ -196,8 +225,7 @@ const CreateTransactionForm = ({
     <Form {...form}>
       <form
         onSubmit={form.handleSubmit(onSubmit)}
-        className="space-y-4 md:py-10"
-      >
+        className="space-y-4 md:py-10">
         <FormField
           control={form.control}
           name="kode"
@@ -240,8 +268,7 @@ const CreateTransactionForm = ({
                   {customers.map((customer) => (
                     <SelectItem
                       key={customer.id}
-                      value={customer.id.toString()}
-                    >
+                      value={customer.id.toString()}>
                       {customer.name}
                     </SelectItem>
                   ))}
@@ -284,6 +311,7 @@ const CreateTransactionForm = ({
                 <TableHead>Harga Banderol</TableHead>
                 <TableHead>Diskon Perbarang (%)</TableHead>
                 <TableHead>QTY</TableHead>
+                <TableHead>Stok</TableHead>
                 <TableHead>Harga Total</TableHead>
               </TableRow>
             </TableHeader>
@@ -305,9 +333,11 @@ const CreateTransactionForm = ({
                         )
                       }
                       min={1}
+                      max={barang.stok}
                       className="w-20"
                     />
                   </TableCell>
+                  <TableCell>{barang.stok - (barang.qty || 0)}</TableCell>
                   <TableCell>
                     {formatRupiah(
                       Number(barang.harga) *
@@ -318,8 +348,7 @@ const CreateTransactionForm = ({
                   <TableCell>
                     <Button
                       variant="destructive"
-                      onClick={() => handleRemoveBarang(barang.id)}
-                    >
+                      onClick={() => handleRemoveBarang(barang.id)}>
                       Hapus
                     </Button>
                   </TableCell>
@@ -436,9 +465,7 @@ const CreateTransactionForm = ({
             </FormItem>
           )}
         />
-        <SubmitButton loadingText="Adding transaction...">
-          Add Transaction
-        </SubmitButton>
+        <SubmitButton loadingText="Menyimpan...">Buat Transaksi</SubmitButton>
       </form>
     </Form>
   );

@@ -20,13 +20,8 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={inter.className}>
-        <div className="w-full lg:grid lg:grid-cols-[234px_1fr]">
-          <Sidebar />
-          <main className="p-4 flex-1 overflow-x-hidden">
-            {children}
-            <Toaster />
-          </main>
-        </div>
+        {children}
+        <Toaster />
       </body>
     </html>
   );
