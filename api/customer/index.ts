@@ -14,3 +14,17 @@ export const getAllDataCustomer = async () => {
     return [];
   }
 };
+
+export const getCustomerById = async (cust_id: number) => {
+  try {
+    const res = await db.customer.findUnique({
+      where: {
+        id: cust_id,
+      },
+    });
+    return res;
+  } catch (error) {
+    console.log(error);
+    return [];
+  }
+};

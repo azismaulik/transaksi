@@ -13,17 +13,8 @@ import {
   getSortedRowModel,
   useReactTable,
 } from "@tanstack/react-table";
-import { ArrowUpDown, ChevronDown, MoreHorizontal } from "lucide-react";
-
+import { ArrowUpDown } from "lucide-react";
 import { Button, buttonVariants } from "@/components/ui/button";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
 import { Input } from "@/components/ui/input";
 import {
   Table,
@@ -34,32 +25,15 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import Link from "next/link";
+import { Customer, Sales } from "@prisma/client";
+import { formatRupiah } from "@/lib/helper/formatRupiah";
+import { formatDate } from "@/lib/helper/formatDate";
 
-export type Transaction = {
-  id: number;
-  kode: string;
-  tgl: Date;
-  cust_name: string;
-  subtotal: number;
-  diskon: number;
-  ongkir: number;
-  total_bayar: number;
+type SalesWithCustomer = Sales & {
+  customer: Customer;
 };
 
-const data: Transaction[] = [
-  {
-    id: 1,
-    kode: "TRX001",
-    tgl: new Date("2024-08-03"),
-    cust_name: "John Doe",
-    subtotal: 1000000,
-    diskon: 50000,
-    ongkir: 15000,
-    total_bayar: 965000,
-  },
-];
-
-export const columns: ColumnDef<Transaction>[] = [
+export const columns: ColumnDef<SalesWithCustomer>[] = [
   {
     header: "No",
     id: "rowNumber",
@@ -75,43 +49,50 @@ export const columns: ColumnDef<Transaction>[] = [
       return (
         <Button
           variant="ghost"
-          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}>
+          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+        >
           Tanggal
           <ArrowUpDown className="ml-2 h-4 w-4" />
         </Button>
       );
     },
-    cell: ({ row }) => (
-      <div>{(row.getValue("tgl") as Date).toLocaleDateString()}</div>
-    ),
+    cell: ({ row }) => <div>{formatDate(row.getValue("tgl"))}</div>,
   },
-  {
-    accessorKey: "cust_name",
-    header: "Nama Customer",
-    cell: ({ row }) => <div>{row.getValue("cust_name")}</div>,
-  },
+  // {
+  //   accessorKey: "customer.name",
+  //   header: "Nama Costumer",
+  //   cell: ({ row }) => <div>{row.getValue("customer.name")}</div>,
+  // },
   {
     accessorKey: "subtotal",
     header: () => <div className="text-right">Subtotal</div>,
     cell: ({ row }) => {
       const amount = parseFloat(row.getValue("subtotal"));
-      const formatted = new Intl.NumberFormat("id-ID", {
-        style: "currency",
-        currency: "IDR",
-      }).format(amount);
-      return <div className="text-right font-medium">{formatted}</div>;
+      return (
+        <div className="text-right font-medium">{formatRupiah(amount)}</div>
+      );
     },
   },
   {
     accessorKey: "diskon",
-    header: () => <div className="text-right">Diskon</div>,
+    header: () => <div className="text-right">Diskon (%)</div>,
     cell: ({ row }) => {
-      const amount = parseFloat(row.getValue("diskon"));
-      const formatted = new Intl.NumberFormat("id-ID", {
-        style: "currency",
-        currency: "IDR",
-      }).format(amount);
-      return <div className="text-right font-medium">{formatted}</div>;
+      const diskon = parseFloat(row.getValue("diskon"));
+
+      return <div className="text-right font-medium">{diskon}</div>;
+    },
+  },
+  {
+    accessorKey: "diskon_rupiah",
+    header: () => <div className="text-right">Diskon (Rp)</div>,
+    cell: ({ row }) => {
+      const diskon = parseFloat(row.getValue("diskon"));
+
+      const amount = parseFloat(row.getValue("subtotal")) * (diskon / 100);
+
+      return (
+        <div className="text-right font-medium">{formatRupiah(amount)}</div>
+      );
     },
   },
   {
@@ -119,11 +100,10 @@ export const columns: ColumnDef<Transaction>[] = [
     header: () => <div className="text-right">Ongkir</div>,
     cell: ({ row }) => {
       const amount = parseFloat(row.getValue("ongkir"));
-      const formatted = new Intl.NumberFormat("id-ID", {
-        style: "currency",
-        currency: "IDR",
-      }).format(amount);
-      return <div className="text-right font-medium">{formatted}</div>;
+
+      return (
+        <div className="text-right font-medium">{formatRupiah(amount)}</div>
+      );
     },
   },
   {
@@ -131,44 +111,29 @@ export const columns: ColumnDef<Transaction>[] = [
     header: () => <div className="text-right">Total Bayar</div>,
     cell: ({ row }) => {
       const amount = parseFloat(row.getValue("total_bayar"));
-      const formatted = new Intl.NumberFormat("id-ID", {
-        style: "currency",
-        currency: "IDR",
-      }).format(amount);
-      return <div className="text-right font-medium">{formatted}</div>;
+
+      return (
+        <div className="text-right font-medium">{formatRupiah(amount)}</div>
+      );
     },
   },
   {
-    id: "actions",
-    enableHiding: false,
+    accessorKey: "id",
+    header: () => <div hidden>Aksi</div>,
     cell: ({ row }) => {
-      const transaction = row.original;
-
       return (
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <Button variant="ghost" className="h-8 w-8 p-0">
-              <span className="sr-only">Open menu</span>
-              <MoreHorizontal className="h-4 w-4" />
-            </Button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent align="end">
-            <DropdownMenuLabel>Actions</DropdownMenuLabel>
-            <DropdownMenuItem
-              onClick={() => navigator.clipboard.writeText(transaction.kode)}>
-              Copy transaction code
-            </DropdownMenuItem>
-            <DropdownMenuSeparator />
-            <DropdownMenuItem>View details</DropdownMenuItem>
-            <DropdownMenuItem>Edit transaction</DropdownMenuItem>
-          </DropdownMenuContent>
-        </DropdownMenu>
+        <Link
+          className={buttonVariants({ size: "sm", variant: "link" })}
+          href={`/transaksi/${row.getValue("id")}`}
+        >
+          Lihat Detail
+        </Link>
       );
     },
   },
 ];
 
-export function TransactionTable() {
+export function TransactionTable({ data }: { data: SalesWithCustomer[] }) {
   const [sorting, setSorting] = React.useState<SortingState>([]);
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
     []
@@ -201,7 +166,8 @@ export function TransactionTable() {
       <div className="flex items-center justify-between py-4 gap-4">
         <Link
           className={buttonVariants({ variant: "default" })}
-          href="/buat-transaksi">
+          href="transaksi/buat"
+        >
           Buat Transaksi
         </Link>
         <Input
@@ -237,8 +203,9 @@ export function TransactionTable() {
             {table.getRowModel().rows?.length ? (
               table.getRowModel().rows.map((row, index) => (
                 <TableRow
-                  key={row.id}
-                  data-state={row.getIsSelected() && "selected"}>
+                  key={index}
+                  data-state={row.getIsSelected() && "selected"}
+                >
                   {row.getVisibleCells().map((cell) => (
                     <React.Fragment key={cell.id}>
                       <TableCell key={cell.id}>
@@ -256,7 +223,8 @@ export function TransactionTable() {
               <TableRow>
                 <TableCell
                   colSpan={columns.length}
-                  className="h-24 text-center">
+                  className="h-24 text-center"
+                >
                   No results.
                 </TableCell>
               </TableRow>
