@@ -112,7 +112,7 @@ export const columns: ColumnDef<Barang>[] = [
 
       return (
         <div className="flex gap-2 items-center">
-          <EditModal barang={barang} />
+          {/* <EditModal barang={barang} /> */}
           {/* <DeleteModal barang={barang} /> */}
         </div>
       );

@@ -64,7 +64,7 @@ export const columns: ColumnDef<Customer>[] = [
 
       return (
         <div className="flex gap-2 items-center">
-          <EditModalCustomer customer={customer} />
+          {/* <EditModalCustomer customer={customer} /> */}
           {/* <DeleteModalCustomer customer={customer} /> */}
         </div>
       );
@@ -136,7 +136,8 @@ export function CustomerTable({ data }: { data: Customer[] }) {
               table.getRowModel().rows.map((row, index) => (
                 <TableRow
                   key={row.id}
-                  data-state={row.getIsSelected() && "selected"}>
+                  data-state={row.getIsSelected() && "selected"}
+                >
                   {row.getVisibleCells().map((cell) => (
                     <React.Fragment key={cell.id}>
                       <TableCell>
@@ -154,7 +155,8 @@ export function CustomerTable({ data }: { data: Customer[] }) {
               <TableRow>
                 <TableCell
                   colSpan={columns.length}
-                  className="h-24 text-center">
+                  className="h-24 text-center"
+                >
                   No results.
                 </TableCell>
               </TableRow>
