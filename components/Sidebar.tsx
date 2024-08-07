@@ -20,7 +20,8 @@ import {
   Package,
 } from "lucide-react";
 import { useState } from "react";
-import { Button } from "./ui/button";
+import { logout } from "@/lib/actions/auth.action";
+import SubmitButton from "./SubmitButton";
 
 const menus = [
   {
@@ -56,7 +57,8 @@ const Sidebar = () => {
         </SheetTrigger>
         <SheetContent
           side="left"
-          className="flex flex-col justify-between h-screen">
+          className="flex flex-col justify-between h-screen"
+        >
           <SheetHeader>
             <SheetTitle className="text-2xl font-bold text-left">
               Azis.
@@ -76,16 +78,19 @@ const Sidebar = () => {
                     "bg-primary text-white px-4": pathname === menu.path,
                   }
                 )}
-                href={menu.path}>
+                href={menu.path}
+              >
                 <span>{menu.icon}</span>
                 <span>{menu.label}</span>
               </Link>
             ))}
           </div>
-          <Button className="mt-auto">
-            <LogOut className="mr-2 size-5" />
-            Logout
-          </Button>
+          <form className="mt-auto w-full" action={logout}>
+            <SubmitButton loadingText="Sedang Logout" className="w-full">
+              <LogOut className="mr-2 size-5" />
+              Logout
+            </SubmitButton>
+          </form>
         </SheetContent>
       </Sheet>
 
@@ -102,16 +107,19 @@ const Sidebar = () => {
                   "bg-primary text-white px-4": pathname === menu.path,
                 }
               )}
-              href={menu.path}>
+              href={menu.path}
+            >
               <span>{menu.icon}</span>
               <span>{menu.label}</span>
             </Link>
           ))}
         </div>
-        <Button className="mt-auto">
-          <LogOut className="mr-2 size-5" />
-          Logout
-        </Button>
+        <form className="mt-auto w-full" action={logout}>
+          <SubmitButton loadingText="Sedang Logout" className="w-full">
+            <LogOut className="mr-2 size-5" />
+            Logout
+          </SubmitButton>
+        </form>
       </aside>
     </>
   );

@@ -42,7 +42,6 @@ const LoginForm = () => {
         title: "Success",
         description: "Logged in successfully",
       });
-      // No need to redirect here as the server action already handles it
     } catch (error) {
       toast({
         variant: "destructive",
@@ -60,7 +59,8 @@ const LoginForm = () => {
       <Form {...form}>
         <form
           onSubmit={form.handleSubmit(onSubmit)}
-          className="space-y-8 w-[400px] bg-background shadow py-8 px-4 rounded-md">
+          className="space-y-8 w-[400px] bg-background shadow py-8 px-4 rounded-md"
+        >
           <FormField
             control={form.control}
             name="email"

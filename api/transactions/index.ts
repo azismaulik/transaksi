@@ -31,6 +31,16 @@ export const getTransactionById = async (id: number) => {
   }
 };
 
+export const getAllDetailTransactions = async () => {
+  try {
+    const res = await db.salesDet.findMany();
+    return res;
+  } catch (error) {
+    console.log(error);
+    return [];
+  }
+};
+
 export const getTransactionDetail = async (id: number) => {
   try {
     const res = await db.salesDet.findMany({
