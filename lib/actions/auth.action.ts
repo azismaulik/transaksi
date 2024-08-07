@@ -18,7 +18,7 @@ export async function login(data: z.infer<typeof authSchema>) {
 
   if (error) {
     console.error("Login error:", error);
-    throw new Error(error.message);
+    throw new Error("Akun tidak ditemukan");
   }
 
   revalidatePath("/", "layout");

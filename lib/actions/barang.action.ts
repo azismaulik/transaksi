@@ -13,9 +13,7 @@ const productSchema = z.object({
   diskon: z.number().min(0).max(100).optional(),
 });
 
-export async function addProduct(
-  data: z.infer<typeof productSchema>
-): Promise<{ success: boolean }> {
+export async function addProduct(data: z.infer<typeof productSchema>) {
   const validatedData = productSchema.parse(data);
 
   const productData: Prisma.BarangCreateInput = {
@@ -32,10 +30,8 @@ export async function addProduct(
     });
 
     revalidatePath("/barang");
-    return { success: true };
   } catch (error) {
     console.error("Failed to add product:", error);
-    return { success: false };
   }
 }
 

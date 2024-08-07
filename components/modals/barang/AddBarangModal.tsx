@@ -45,6 +45,7 @@ type FormValues = z.infer<typeof formSchema>;
 
 export default function AddBarangModal() {
   const [isOpen, setIsOpen] = useState(false);
+  const [loading, setLoading] = useState(false);
   const router = useRouter();
 
   const generateRandomKode = () => {
@@ -70,25 +71,22 @@ export default function AddBarangModal() {
   }, [isOpen, form]);
 
   async function onSubmit(values: FormValues) {
+    setLoading(true);
     try {
-      const result = await addProduct(values);
-      if (result.success) {
-        toast({
-          title: "Barang berhasil dibuat",
-          description: `${values.nama} telah ditambahkan ke database.`,
-        });
-        form.reset({
-          nama: "",
-          harga: 0,
-          stok: 0,
-          kode: generateRandomKode(),
-          diskon: 0,
-        });
-        router.refresh();
-        setIsOpen(false);
-      } else {
-        throw new Error("Failed to add product");
-      }
+      await addProduct(values);
+      toast({
+        title: "Barang berhasil dibuat",
+        description: `${values.nama} telah ditambahkan ke database.`,
+      });
+      form.reset({
+        nama: "",
+        harga: 0,
+        stok: 0,
+        kode: generateRandomKode(),
+        diskon: 0,
+      });
+      router.refresh();
+      setIsOpen(false);
     } catch (error) {
       toast({
         title: "Error",
@@ -97,6 +95,7 @@ export default function AddBarangModal() {
         variant: "destructive",
       });
     }
+    setLoading(false);
   }
 
   const handleNumberInput = (
@@ -122,7 +121,8 @@ export default function AddBarangModal() {
         <Form {...form}>
           <form
             onSubmit={form.handleSubmit(onSubmit)}
-            className="space-y-4 w-full">
+            className="space-y-4 w-full"
+          >
             <FormField
               control={form.control}
               name="nama"
@@ -220,8 +220,8 @@ export default function AddBarangModal() {
               <DialogClose asChild>
                 <Button variant="outline">Cancel</Button>
               </DialogClose>
-              <SubmitButton loadingText="Menambahkan...">
-                Tambah Barang
+              <SubmitButton disabled={loading} loadingText="Menambahkan...">
+                {loading ? "Menambahkan..." : "Tambah"}
               </SubmitButton>
             </DialogFooter>
           </form>
