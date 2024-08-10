@@ -14,7 +14,6 @@ import {
   useReactTable,
 } from "@tanstack/react-table";
 
-import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import {
   Table,
@@ -136,8 +135,7 @@ export function CustomerTable({ data }: { data: Customer[] }) {
               table.getRowModel().rows.map((row, index) => (
                 <TableRow
                   key={row.id}
-                  data-state={row.getIsSelected() && "selected"}
-                >
+                  data-state={row.getIsSelected() && "selected"}>
                   {row.getVisibleCells().map((cell) => (
                     <React.Fragment key={cell.id}>
                       <TableCell>
@@ -155,8 +153,7 @@ export function CustomerTable({ data }: { data: Customer[] }) {
               <TableRow>
                 <TableCell
                   colSpan={columns.length}
-                  className="h-24 text-center"
-                >
+                  className="h-24 text-center">
                   No results.
                 </TableCell>
               </TableRow>

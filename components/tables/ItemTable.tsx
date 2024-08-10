@@ -27,8 +27,8 @@ import {
 } from "@/components/ui/table";
 import { formatRupiah } from "@/lib/helper/formatRupiah";
 import { Barang } from "@prisma/client";
-import DeleteModal from "@/components/modals/barang/DeleteModal";
 import AddBarangModal from "@/components/modals/barang/AddBarangModal";
+import DeleteModal from "@/components/modals/barang/DeleteModal";
 import EditModal from "@/components/modals/barang/EditModal";
 
 export const columns: ColumnDef<Barang>[] = [
@@ -186,8 +186,7 @@ export function BarangTable({ data }: { data: Barang[] }) {
               table.getRowModel().rows.map((row, index) => (
                 <TableRow
                   key={row.id}
-                  data-state={row.getIsSelected() && "selected"}
-                >
+                  data-state={row.getIsSelected() && "selected"}>
                   {row.getVisibleCells().map((cell) => (
                     <React.Fragment key={cell.id}>
                       <TableCell>
@@ -205,8 +204,7 @@ export function BarangTable({ data }: { data: Barang[] }) {
               <TableRow>
                 <TableCell
                   colSpan={columns.length}
-                  className="h-24 text-center"
-                >
+                  className="h-24 text-center">
                   No results.
                 </TableCell>
               </TableRow>

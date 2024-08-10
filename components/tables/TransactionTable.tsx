@@ -49,8 +49,7 @@ export const columns: ColumnDef<SalesWithCustomer>[] = [
       return (
         <Button
           variant="ghost"
-          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-        >
+          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}>
           Tanggal
           <ArrowUpDown className="ml-2 h-4 w-4" />
         </Button>
@@ -124,8 +123,7 @@ export const columns: ColumnDef<SalesWithCustomer>[] = [
       return (
         <Link
           className={buttonVariants({ size: "sm", variant: "link" })}
-          href={`/transaksi/${row.getValue("id")}`}
-        >
+          href={`/transaksi/${row.getValue("id")}`}>
           Lihat Detail
         </Link>
       );
@@ -166,8 +164,7 @@ export function TransactionTable({ data }: { data: SalesWithCustomer[] }) {
       <div className="flex items-center justify-between py-4 gap-4">
         <Link
           className={buttonVariants({ variant: "default" })}
-          href="transaksi/buat"
-        >
+          href="transaksi/buat">
           Buat Transaksi
         </Link>
         <Input
@@ -204,8 +201,7 @@ export function TransactionTable({ data }: { data: SalesWithCustomer[] }) {
               table.getRowModel().rows.map((row, index) => (
                 <TableRow
                   key={row.id}
-                  data-state={row.getIsSelected() && "selected"}
-                >
+                  data-state={row.getIsSelected() && "selected"}>
                   {row.getVisibleCells().map((cell) => (
                     <React.Fragment key={cell.id}>
                       <TableCell key={cell.id}>
@@ -223,8 +219,7 @@ export function TransactionTable({ data }: { data: SalesWithCustomer[] }) {
               <TableRow>
                 <TableCell
                   colSpan={columns.length}
-                  className="h-24 text-center"
-                >
+                  className="h-24 text-center">
                   No results.
                 </TableCell>
               </TableRow>
@@ -232,11 +227,10 @@ export function TransactionTable({ data }: { data: SalesWithCustomer[] }) {
             <TableRow>
               <TableCell
                 colSpan={columns.length - 2}
-                className="text-right tracking-widest"
-              >
+                className="text-right tracking-widest">
                 Grand Total
               </TableCell>
-              <TableCell className="font-semibold">
+              <TableCell className="font-semibold text-right">
                 {formatRupiah(
                   Number(
                     table
