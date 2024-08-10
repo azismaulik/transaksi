@@ -1,4 +1,5 @@
 import { getAllDataCustomer } from "@/api/customer";
+import Loading from "@/app/loading";
 import { CustomerTable } from "@/components/tables/CustomerTable";
 import { Suspense } from "react";
 
@@ -8,7 +9,7 @@ const PageCustomer = async () => {
     <>
       <h1 className="text-2xl font-bold mb-10">Data Customer</h1>
 
-      <Suspense fallback={<span className="loader"></span>}>
+      <Suspense fallback={<Loading />}>
         <CustomerTable data={data} />
       </Suspense>
     </>

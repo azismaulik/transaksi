@@ -9,7 +9,7 @@ import {
   SheetTitle,
   SheetTrigger,
 } from "./ui/sheet";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { cn } from "@/lib/utils";
 import {
   ArrowRightLeft,
@@ -20,8 +20,9 @@ import {
   Package,
 } from "lucide-react";
 import { useState } from "react";
-import { logout } from "@/lib/actions/auth.action";
-import SubmitButton from "./SubmitButton";
+import { createClient } from "@/utils/supabase/client";
+import { Button } from "./ui/button";
+import { toast } from "./ui/use-toast";
 
 const menus = [
   {
@@ -49,6 +50,27 @@ const menus = [
 const Sidebar = () => {
   const pathname = usePathname();
   const [isOpen, setIsOpen] = useState(false);
+  const router = useRouter();
+
+  const handleLogout = async () => {
+    try {
+      const supabase = createClient();
+      const { error } = await supabase.auth.signOut();
+
+      if (error) {
+        console.error("Logout error:", error);
+        throw new Error("Failed to log out");
+      } else {
+        router.push("/login");
+        toast({
+          title: "Success",
+          description: "Logged out successfully",
+        });
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  };
   return (
     <>
       <Sheet open={isOpen} onOpenChange={setIsOpen}>
@@ -57,8 +79,7 @@ const Sidebar = () => {
         </SheetTrigger>
         <SheetContent
           side="left"
-          className="flex flex-col justify-between h-screen"
-        >
+          className="flex flex-col justify-between h-screen">
           <SheetHeader>
             <SheetTitle className="text-2xl font-bold text-left">
               Azis.
@@ -78,19 +99,16 @@ const Sidebar = () => {
                     "bg-primary text-white px-4": pathname === menu.path,
                   }
                 )}
-                href={menu.path}
-              >
+                href={menu.path}>
                 <span>{menu.icon}</span>
                 <span>{menu.label}</span>
               </Link>
             ))}
           </div>
-          <form className="mt-auto w-full" action={logout}>
-            <SubmitButton loadingText="Sedang Logout" className="w-full">
-              <LogOut className="mr-2 size-5" />
-              Logout
-            </SubmitButton>
-          </form>
+          <Button className="w-full mt-auto" onClick={handleLogout}>
+            <LogOut className="mr-2 size-5" />
+            Logout
+          </Button>
         </SheetContent>
       </Sheet>
 
@@ -107,19 +125,16 @@ const Sidebar = () => {
                   "bg-primary text-white px-4": pathname === menu.path,
                 }
               )}
-              href={menu.path}
-            >
+              href={menu.path}>
               <span>{menu.icon}</span>
               <span>{menu.label}</span>
             </Link>
           ))}
         </div>
-        <form className="mt-auto w-full" action={logout}>
-          <SubmitButton loadingText="Sedang Logout" className="w-full">
-            <LogOut className="mr-2 size-5" />
-            Logout
-          </SubmitButton>
-        </form>
+        <Button className="w-full mt-auto" onClick={handleLogout}>
+          <LogOut className="mr-2 size-5" />
+          Logout
+        </Button>
       </aside>
     </>
   );

@@ -1,4 +1,5 @@
 "use client";
+
 import React, { useState } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
@@ -15,7 +16,7 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { toast } from "@/components/ui/use-toast";
-import { login } from "@/lib/actions/auth.action";
+import { createClient } from "@/utils/supabase/client";
 
 const formSchema = z.object({
   email: z.string().email({ message: "Invalid email address" }),
@@ -25,6 +26,7 @@ const formSchema = z.object({
 const LoginForm = () => {
   const [isLoading, setIsLoading] = useState(false);
   const router = useRouter();
+  const supabase = createClient();
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -35,13 +37,23 @@ const LoginForm = () => {
   });
 
   async function onSubmit(values: z.infer<typeof formSchema>) {
-    setIsLoading(true);
     try {
-      await login(values);
-      toast({
-        title: "Success",
-        description: "Logged in successfully",
+      setIsLoading(true);
+      const { error } = await supabase.auth.signInWithPassword({
+        email: values.email,
+        password: values.password,
       });
+
+      if (error) {
+        console.error("Login error:", error);
+        throw new Error("Akun tidak ditemukan");
+      } else {
+        toast({
+          title: "Success",
+          description: "Login berhasil, anda akan diarahkan ke dashboard",
+        });
+        router.push("/");
+      }
     } catch (error) {
       toast({
         variant: "destructive",
@@ -59,8 +71,7 @@ const LoginForm = () => {
       <Form {...form}>
         <form
           onSubmit={form.handleSubmit(onSubmit)}
-          className="space-y-8 w-[400px] bg-background shadow py-8 px-4 rounded-md"
-        >
+          className="space-y-8 w-[400px] bg-background shadow py-8 px-4 rounded-md">
           <FormField
             control={form.control}
             name="email"
