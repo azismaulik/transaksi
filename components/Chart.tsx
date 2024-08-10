@@ -47,22 +47,9 @@ export function ChartComponent({
         <CartesianGrid strokeDasharray="3 3" />
         <XAxis
           dataKey="productName"
-          tick={({ x, y, payload }) => (
-            <g transform={`translate(${x},${y})`}>
-              <text
-                x={0}
-                y={0}
-                dy={16}
-                fill="#666"
-                className="hidden xl:block"
-                style={{ fontSize: 12 }}
-              >
-                {payload.value}
-              </text>
-            </g>
-          )}
-          height={60}
-          interval={0}
+          tickLine={false}
+          axisLine={false}
+          className="text-xs font-medium hidden md:block"
         />
         <YAxis />
         <Tooltip
